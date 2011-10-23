@@ -22,32 +22,24 @@ pairs = [
 	'http://www.gravatar.com/avatar/e4ef0a73ae8ebe96720e9281d0849ae7'
 	];
 
-cards = [ ];
 
-count = 0
-for imageUrl in pairs
-  do (imageUrl) ->
-		card1 =
-			id: "kortti_"+(count*2)
-			url: imageUrl
-			content: "<div id='kortti_"+(count*2)+"' class='kortti'><img class='kortti' src='"+imageUrl+"' /></div>"
-
-		card2 =
-			id: "kortti_"+(count*2+1)
-			url: imageUrl
-			content: "<div id='kortti_"+(count*2+1)+"' class='kortti'><img class='kortti' src='"+imageUrl+"' /></div>"
-
-		cards.push(card1);
-		cards.push(card2);
-		count+=1
-
-
+class Card
+	constructor: (@id, @url) ->
+		@id = "card_"+@id
+		@content = "<div id='"+@id+"' class='card'><img class='card' src='"+@url+"' /></div>"
 
 setupBoard = () ->
+	cards = [ ];
+	count = 0
+	for imageUrl in pairs
+		do (imageUrl) ->
+			cards.push(new Card count*2, imageUrl);
+			cards.push(new Card count*2+1, imageUrl);
+			count+=1
+
 	cardHtmls = (card.content for card in cards)
 
-	console.log(cardHtmls.join(""))
-	$('#lauta').html(cardHtmls.join(""))
+	$('#board').html(cardHtmls.join(""))
 
 	for card in cards
 		do(card) ->

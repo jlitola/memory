@@ -16,7 +16,7 @@ div.otsikko {
 
 $green: #97CC9A;
 
-div.lauta {
+div.board {
 	background: $green;
 	border: 1px solid darken($green, 20%);
 	width: 1024px; height: 600px;
@@ -24,7 +24,7 @@ div.lauta {
 	margin-top: 20px;
 }
 
-div.kortti {
+div.card {
 	background: white;
 	background-image: url('/assets/card_background.png');
 	background-position: 10px 10px;
@@ -36,7 +36,7 @@ div.kortti {
 	margin: 12px;
 }
 
-img.kortti {
+img.card {
 	width: 100px; height: 100px;
 	display: none;
 }
