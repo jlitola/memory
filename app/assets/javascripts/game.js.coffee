@@ -28,30 +28,23 @@ class Card
 		@id = "card_"+@id
 		@content = "<div id='"+@id+"' class='card'><img class='card' src='"+@url+"' /></div>"
 
-setupBoard = () ->
-	cards = [ ];
+setupBoard = ->
+	cards = [];
 	count = 0
 	for imageUrl in pairs
-		do (imageUrl) ->
-			cards.push(new Card count*2, imageUrl);
-			cards.push(new Card count*2+1, imageUrl);
-			count+=1
+		cards.push(new Card count*2, imageUrl);
+		cards.push(new Card count*2+1, imageUrl);
+		count+=1
 
-	cardHtmls = (card.content for card in cards)
-
-	$('#board').html(cardHtmls.join(""))
+	$('#board').html (card.content for card in cards).join("")
 
 	for card in cards
-		do(card) ->
-			$("#"+card.id).click ( () -> 
-				$(this).find("img:first").fadeIn('fast') 
-			)
+		$("#"+card.id).click -> 
+			$(this).find("img:first").fadeIn('fast') 
 
-	$("#piilota").click( () -> 
+	$("#piilota").click -> 
 		for card in cards 
-			do(card) -> 
-				$("#"+card.id+" img:first").fadeOut('fast') 
-	)
+			$("#"+card.id+" img:first").fadeOut('fast') 
 
-$(document).ready () ->
+$(document).ready ->
 	setupBoard()
