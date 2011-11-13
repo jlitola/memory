@@ -41,16 +41,18 @@ class Game
 		@board.shuffle()
 
 	card_selected: (id) ->
+		card = @cards[id]
+		return if card == @picked
 		unless @picked
-			card = @cards[id]
 			@picked = card
 			card.show()
 		else
-			card = @cards[id]
 			card.show()
 			if @picked.isPair card
-				@picked = null
 				@foundPairs++
+				card.element().unbind('click') 
+				@picked.element().unbind('click') 
+				@picked = null
 			else
 				@picked.hide()
 				card.hide()
@@ -58,6 +60,14 @@ class Game
 
 	cards: ->
 		@cards
+
+	setupJS: ->
+		$("card").remove()
+		$('#board').html (card.content for card in @board).join("")
+
+		for card in @board
+			$("#"+card.id).click ->
+				card_clicked $(this)
 
 class Card
 	constructor: (@id, @url) ->
@@ -74,8 +84,7 @@ class Card
 		this.element().find("img:first").delay(1000).fadeOut('fast')
 
 	isPair: (c) ->
-		console.log("a #{this.url} b #{c.url}")
-		this.url == c.url
+		this != c and this.url == c.url
 
 game = null
 
@@ -86,23 +95,11 @@ card_clicked = (element) ->
 
 setupBoard = ->
 	game = new Game(pairs)
-
-	cards = game.board
-	$('#board').html (card.content for card in cards).join("")
-
-	for card in cards
-		$("#"+card.id).click ->
-			card_clicked $(this)
+	game.setupJS()
 
 	$("#new_game").click ->
-		$("card").remove()
 		game = new Game(pairs)
-		cards = game.board
-		$('#board').html (card.content for card in cards).join("")
-
-		for card in cards
-			$("#"+card.id).click ->
-				card_clicked $(this)
+		game.setupJS()
 
 $(document).ready ->
 	setupBoard()
