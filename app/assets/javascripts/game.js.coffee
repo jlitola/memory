@@ -6,45 +6,103 @@
 card_back = 'http://images.all-free-download.com/images/graphicmedium/fish_91139.jpg';
 
 pairs = [
-	'http://www.gravatar.com/avatar/e4ef0a73ae8ebe96720e9281d0849ae7',
-	'http://images.all-free-download.com/images/graphicmedium/fish_91139.jpg',
-	'http://images.all-free-download.com/images/graphicmedium/fish_bowl_89046.jpg',
-	'/assets/muori.jpg',
-	'http://www.gravatar.com/avatar/e4ef0a73ae8ebe96720e9281d0849ae7',
-	'http://www.gravatar.com/avatar/e4ef0a73ae8ebe96720e9281d0849ae7',
-	'http://www.gravatar.com/avatar/e4ef0a73ae8ebe96720e9281d0849ae7',
-	'http://www.gravatar.com/avatar/e4ef0a73ae8ebe96720e9281d0849ae7',
-	'http://www.gravatar.com/avatar/e4ef0a73ae8ebe96720e9281d0849ae7',
-	'http://www.gravatar.com/avatar/e4ef0a73ae8ebe96720e9281d0849ae7',
-	'http://www.gravatar.com/avatar/e4ef0a73ae8ebe96720e9281d0849ae7',
-	'http://www.gravatar.com/avatar/e4ef0a73ae8ebe96720e9281d0849ae7',
-	'http://www.gravatar.com/avatar/e4ef0a73ae8ebe96720e9281d0849ae7',
-	'http://www.gravatar.com/avatar/e4ef0a73ae8ebe96720e9281d0849ae7'
-	];
+	'/assets/IMG_0263.JPG',
+	'/assets/IMG_0267.jpg',
+	'/assets/IMG_0269.jpg',
+	'/assets/IMG_0270.JPG',
+	'/assets/IMG_0277.jpg',
+	'/assets/IMG_0285.jpg',
+	'/assets/IMG_0287.jpg',
+	'/assets/IMG_0291.JPG',
+	'/assets/IMG_5148.JPG',
+	'/assets/IMG_8164.jpg',
+	'/assets/IMG_8184.JPG',
+	'/assets/PICT3735.JPG'
+	]
 
+Array::shuffle = -> @sort -> 0.5 - Math.random()
+
+class Game
+	@picked = null
+	@cards = []
+	@foundPairs = 0
+
+	constructor: (pairs) ->
+		@cards = []
+		@board = []
+
+		count = 0
+		for imageUrl in pairs
+			@cards.push(new Card count*2, imageUrl);
+			@cards.push(new Card count*2+1, imageUrl);
+			count+=1
+
+		@board = @cards.slice()
+		@board.shuffle()
+
+	card_selected: (id) ->
+		unless @picked
+			card = @cards[id]
+			@picked = card
+			card.show()
+		else
+			card = @cards[id]
+			card.show()
+			if @picked.isPair card
+				@picked = null
+				@foundPairs++
+			else
+				@picked.hide()
+				card.hide()
+				@picked = null
+
+	cards: ->
+		@cards
 
 class Card
 	constructor: (@id, @url) ->
+		@content = "<div data-id='#{@id}' id='card_#{@id}' class='card'><img class='card' src='"+@url+"' /></div>"
 		@id = "card_"+@id
-		@content = "<div id='"+@id+"' class='card'><img class='card' src='"+@url+"' /></div>"
+
+	element: ->
+		$("##{@id}")
+
+	show: ->
+		this.element().find("img:first").fadeIn('fast')
+
+	hide: ->
+		this.element().find("img:first").delay(1000).fadeOut('fast')
+
+	isPair: (c) ->
+		console.log("a #{this.url} b #{c.url}")
+		this.url == c.url
+
+game = null
+
+card_clicked = (element) ->
+	console.log(element.attr("data-id"))
+	game.card_selected(element.attr("data-id"))
+
 
 setupBoard = ->
-	cards = [];
-	count = 0
-	for imageUrl in pairs
-		cards.push(new Card count*2, imageUrl);
-		cards.push(new Card count*2+1, imageUrl);
-		count+=1
+	game = new Game(pairs)
 
+	cards = game.board
 	$('#board').html (card.content for card in cards).join("")
 
 	for card in cards
-		$("#"+card.id).click -> 
-			$(this).find("img:first").fadeIn('fast') 
+		$("#"+card.id).click ->
+			card_clicked $(this)
 
-	$("#piilota").click -> 
-		for card in cards 
-			$("#"+card.id+" img:first").fadeOut('fast') 
+	$("#new_game").click ->
+		$("card").remove()
+		game = new Game(pairs)
+		cards = game.board
+		$('#board').html (card.content for card in cards).join("")
+
+		for card in cards
+			$("#"+card.id).click ->
+				card_clicked $(this)
 
 $(document).ready ->
 	setupBoard()
