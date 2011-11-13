@@ -50,8 +50,10 @@ class Game
 			card.show()
 			if @picked.isPair card
 				@foundPairs++
-				card.element().unbind('click') 
-				@picked.element().unbind('click') 
+				for e in [card.element(), @picked.element()]
+					e.unbind('click')
+					e.effect('highlight', 3000)
+
 				@picked = null
 			else
 				@picked.hide()
